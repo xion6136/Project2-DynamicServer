@@ -37,17 +37,46 @@ app.get('/', (req, res) => {
 
 // Example GET request handler for data about a specific year
 app.get('/year/:selected_year', (req, res) => {
-    console.log(req.params.selected_year);
-    fs.readFile(path.join(template_dir, 'template.html'), (err, template) => {
+        let selected_year = parseInt(req.params.selected_year);
+        console.log(selected_year);
+        fs.readFile(path.join(template_dir, 'template.html'), (err, template) => {
         // modify `template` and send response
         // this will require a query to the SQL database
-        let response = template.toString();
-        response = response.replace("%%CURRENT_DYNAMIC_SUBJECT%%", "Year " + req.params.selected_year);
-        let img = '/images/airline.jpg';
-        response = response.replace('%%IMG_SRC%%', img);
-        response = response.replace('%%IMG_ALT%%', 'photo of airline');
+        let query = 'Select Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
+        CSRArrTime, UniqueCarrier, AirTime, AirDelay, DepDelay, Origin, \
+        Dest, Distance, Cancelled from Year Where Year = ?';
+        db.all(query, [selected_year], (err, rows) => {
+            console.log(query);
+            console.log(err);
+            console.log(rows);
+            let response = template.toString();
+            let img = '/images/airline.jpg';
 
-        res.status(200).type('html').send(response); // <-- you may need to change this
+            response = response.replace("%%CURRENT_DYNAMIC_SUBJECT%%", "Year " + req.params.selected_year);
+            response = response.replace('%%IMG_SRC%%', img);
+            response = response.replace('%%IMG_ALT%%', 'photo of airline');
+            let year_data = '';
+           /* for (let i = 0; i < 100; i++) {
+                year_data = year_data + '<tr>';
+                year_data = year_data + '<td>' + rows[i].Month + '</td>';
+                year_data = year_data + '<td>' + rows[i].DayOfMonth + '</td>';
+                year_data = year_data + '<td>' + rows[i].CSRDepTime + '</td>';
+                year_data = year_data + '<td>' + rows[i].ArrTime + '</td>';
+                year_data = year_data + '<td>' + rows[i].CSRArrTime + '</td>';
+                year_data = year_data + '<td>' + rows[i].UniqueCarrier + '</td>';
+                year_data = year_data + '<td>' + rows[i].AirTime + '</td>';
+                year_data = year_data + '<td>' + rows[i].AirDelay + '</td>';
+                year_data = year_data + '<td>' + rows[i].DepDelay + '</td>';
+                year_data = year_data + '<td>' + rows[i].Origin + '</td>';
+                year_data = year_data + '<td>' + rows[i].Dest + '</td>';
+                year_data = year_data + '<td>' + rows[i].Distance + '</td>';
+                year_data = year_data + '<td>' + rows[i].Cancelled + '</td>';
+                year_data = year_data + '</tr>';
+            }
+            console.log(rows);
+            response = response.replace('%%YEAR_INFO%%', year_data); */
+            res.status(200).type('html').send(response); // <-- you may need to change this
+        })
     });
 });
 
