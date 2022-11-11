@@ -1,3 +1,39 @@
+.clear {
+    clear: both;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    border: solid 1px #666666;
+    width: 6rem;
+    text-align: center;
+}
+
+td {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: normal;
+    border: solid 1px #666666;
+    width: 6rem;
+    text-align: right;
+}
+
 #content {
-    color: red;
+    width: 1000px;
+    background-color: #D8D8D8;
+}
+
+* {
+    margin: 0 auto;
+}
+
+html {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 100%;
 }
