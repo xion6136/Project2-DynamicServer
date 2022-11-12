@@ -37,16 +37,23 @@ app.get('/', (req, res) => {
 
 // Example GET request handler for data about a specific year
 app.get('/year/:selected_year', (req, res) => {
+        function increment() {
+            selected_year += 1;
+            console.log(selected_year);
+            app.get('/', (req, res) => {
+                res.redirect(selected_year);
+            });
+            
+        }
         let selected_year = parseInt(req.params.selected_year);
         console.log(selected_year);
         fs.readFile(path.join(template_dir, 'template.html'), (err, template) => {
         // modify `template` and send response
         // this will require a query to the SQL database
-        let query = 'Select Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
+        let query = 'SELECT Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
         CSRArrTime, UniqueCarrier, AirTime, AirDelay, DepDelay, Origin, \
-        Dest, Distance, Cancelled from Year Where Year = ?';
+        Dest, Distance, Cancelled FROM Year WHERE Year = ?';
         db.all(query, [selected_year], (err, rows) => {
-            console.log(query);
             console.log(err);
             console.log(rows);
             let response = template.toString();
@@ -55,8 +62,12 @@ app.get('/year/:selected_year', (req, res) => {
             response = response.replace("%%CURRENT_DYNAMIC_SUBJECT%%", "Year " + req.params.selected_year);
             response = response.replace('%%IMG_SRC%%', img);
             response = response.replace('%%IMG_ALT%%', 'photo of airline');
+            response = response.replace('%%DYNAMIC_UP%%', 'Increment Year');
+            response = response.replace('%%DYNAMIC_DOWN%%', 'Decrement Year');
+
             let year_data = '';
-           /* for (let i = 0; i < 100; i++) {
+            /*
+            for (let i = 0; i < 50; i++) {
                 year_data = year_data + '<tr>';
                 year_data = year_data + '<td>' + rows[i].Month + '</td>';
                 year_data = year_data + '<td>' + rows[i].DayOfMonth + '</td>';
@@ -72,13 +83,20 @@ app.get('/year/:selected_year', (req, res) => {
                 year_data = year_data + '<td>' + rows[i].Distance + '</td>';
                 year_data = year_data + '<td>' + rows[i].Cancelled + '</td>';
                 year_data = year_data + '</tr>';
-            }
-            console.log(rows);
-            response = response.replace('%%YEAR_INFO%%', year_data); */
+            } */
+            response = response.replace('%%DYNAMIC_INFOMATION%%', year_data); 
+            response = response.replace('%%DYNAMIC_H1%%', 'Why Airline Delay is Important to Sustainability')
+            response = response.replace('%%DYNAMIC_PARAGRAPH%%', "Causes more gas emission to escape to the Earth's atmosphere \
+            meaning that there will be more environmental harm. In other words, the longer the delay, cancellation, flight diversion, and so forth there are, \
+            the more impact airline delay has on the environment. ")
+            console.log(selected_year);
             res.status(200).type('html').send(response); // <-- you may need to change this
         })
     });
 });
+
+
+
 
 
 app.listen(port, () => {

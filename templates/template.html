@@ -9,6 +9,8 @@
 <body>
     <div class="grid-container">
         <header style="text-align: center; font-size: 2REM; font-weight: bold" class="grid-x grid-padding-x show-for-medium">%%CURRENT_DYNAMIC_SUBJECT%%</header>
+        <button type="button" onclick="increment()" style="text-align: center">%%DYNAMIC_UP%%</button>
+        <button type="button" onclick="decrement()" style="text-align: center">%%DYNAMIC_DOWN%%</button>
         <div class="grid-x grid-padding-x">
             <div class="cell large-3">
                 <img src="%%IMG_SRC%%" alt="%%IMG_ALT%%" />
@@ -57,12 +59,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        %%YEAR_INFO%%
+                        %%DYNAMIC_INFOMATION%%
                     </tbody>
                 </table>
             </div>
             <div class="cell large-auto">
-                <p>%%DYNAMIC_INFORMATION%%</p>
+                <h1>%%DYNAMIC_H1%%</h1>
+                <p style="font-size:2rem">
+                    %%DYNAMIC_PARAGRAPH%%
+                </p>
             </div>
         </div>
     </div>
