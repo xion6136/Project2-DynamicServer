@@ -3,14 +3,14 @@
 }
 
 table {
-    border-collapse: collapse;
-}
+    border: 1px solid black;
+  }
 
 th {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1rem;
     font-weight: bold;
-    border: solid 1px #666666;
+    border: solid 1px black;
     width: 6rem;
     text-align: center;
 }
@@ -19,7 +19,7 @@ td {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1rem;
     font-weight: normal;
-    border: solid 1px #666666;
+    border: solid 1px black;
     width: 6rem;
     text-align: right;
 }

@@ -9,8 +9,14 @@
 <body>
     <div class="grid-container">
         <header style="text-align: center; font-size: 2REM; font-weight: bold" class="grid-x grid-padding-x show-for-medium">%%CURRENT_DYNAMIC_SUBJECT%%</header>
-        <button type="button" onclick="increment()" style="text-align: center">%%DYNAMIC_UP%%</button>
-        <button type="button" onclick="decrement()" style="text-align: center">%%DYNAMIC_DOWN%%</button>
+        <div style="text-align: center">
+            <a href=%%DYNAMIC_LINK1%%>
+                <button type="button">%%DYNAMIC_UP%%</button>
+            </a>
+            <a href=%%DYNAMIC_LINK2%%>
+                <button type="button">%%DYNAMIC_DOWN%%</button>
+            </a>
+        </div>
         <div class="grid-x grid-padding-x">
             <div class="cell large-3">
                 <img src="%%IMG_SRC%%" alt="%%IMG_ALT%%" />
@@ -74,7 +80,45 @@
 
     <div class="grid-x grid-padding-x">
         <div class="cell large-auto">
-            <!--Chart Dynamic in here-->
+            <canvas id="myChart" width="400" height="400"></canvas>
+            <script>
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['AirTime', 'Air Delay', 'Departure Delay', 'Distance', 'Arrival Time', 'Scheduled Arrival Time'],
+                    datasets: [{
+                        label: 'Airline Delay',
+                        data: [rows.ArrTime, rows.AirDelay, rows.DepDelay, rows.Distance, rows.ArrTime, rows.CSRArrTime],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            </script>
+            
         </div>
     </div>
 </body>
