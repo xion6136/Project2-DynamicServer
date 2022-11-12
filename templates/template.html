@@ -86,10 +86,10 @@
             const myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['AirTime', 'Air Delay', 'Departure Delay', 'Distance', 'Arrival Time', 'Scheduled Arrival Time'],
+                    labels: ['Air Delay', 'Departure Delay', 'Distance', 'Arrival Time', 'Scheduled Arrival Time'],
                     datasets: [{
                         label: 'Airline Delay',
-                        data: [rows.ArrTime, rows.AirDelay, rows.DepDelay, rows.Distance, rows.ArrTime, rows.CSRArrTime],
+                        data: ["%%DATA1%%", "%%DATA2%%", "%%DATA3%%", "%%DATA4%%", "%%DATA5%%", "%%DATA6%%"],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -118,7 +118,6 @@
                 }
             });
             </script>
-            
         </div>
     </div>
 </body>

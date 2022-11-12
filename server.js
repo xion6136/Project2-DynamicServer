@@ -65,7 +65,7 @@ app.get('/year/:selected_year', (req, res) => {
         // this will require a query to the SQL database
         let query = 'SELECT Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
         CSRArrTime, UniqueCarrier, AirTime, AirDelay, DepDelay, Origin, \
-        Dest, Distance, Cancelled FROM Year WHERE Year = ?';
+        Dest, Distance, Cancelled FROM Year WHERE Year = ? LIMIT 50';
         db.all(query, [selected_year], (err, rows) => {
             console.log(err);
             console.log(rows);
@@ -95,48 +95,20 @@ app.get('/year/:selected_year', (req, res) => {
                 year_data = year_data + '<td>' + rows[i].Distance + '</td>';
                 year_data = year_data + '<td>' + rows[i].Cancelled + '</td>';
                 year_data = year_data + '</tr>';
+                response = response.replace('%%DATA1%%', rows[i].AirDelay);
+                response = response.replace('%%DATA2%%', rows[i].DepDelay);
+                response = response.replace('%%DATA3%%', rows[i].AirDelay);
+                response = response.replace('%%DATA4%%', rows[i].Distance);
+                response = response.replace('%%DATA5%%', rows[i].ArrTime);
+                response = response.replace('%%DATA6%%', rows[i].CSRArrTime);
+
+
             } 
             response = response.replace('%%DYNAMIC_INFOMATION%%', year_data); 
             response = response.replace('%%DYNAMIC_H1%%', 'Why Airline Delay is Important to Sustainability')
             response = response.replace('%%DYNAMIC_PARAGRAPH%%', "Causes more gas emission to escape to the Earth's atmosphere \
             meaning that there will be more environmental harm. In other words, the longer the delay, cancellation, flight diversion, and so forth there are, \
             the more impact airline delay has on the environment. ")
-
-            const ctx = Document.getElementById('myChart').getContext('2d');
-            const myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['AirTime', 'Air Delay', 'Departure Delay', 'Distance', 'Arrival Time', 'Scheduled Arrival Time'],
-                    datasets: [{
-                        label: 'Airline Delay',
-                        data: [rows.ArrTime, rows.AirDelay, rows.DepDelay, rows.Distance, rows.ArrTime, rows.CSRArrTime],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
             res.status(200).type('html').send(response); // <-- you may need to change this
         })
     });
