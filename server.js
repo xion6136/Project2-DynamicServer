@@ -97,10 +97,10 @@ app.get('/year/:selected_year', (req, res) => {
                 year_data = year_data + '</tr>';
                 response = response.replace('DATA1', rows[i].AirDelay);
                 response = response.replace('DATA2', rows[i].DepDelay);
-                response = response.replace('DATA3', rows[i].AirDelay);
-                response = response.replace('DATA4', rows[i].Distance);
-                response = response.replace('DATA5', rows[i].ArrTime);
-                response = response.replace('DATA6', rows[i].CSRArrTime);
+                response = response.replace('DATA3', rows[i].ArrTime);
+                response = response.replace('DATA4', rows[i].CSRArrTime);
+                response = response.replace('DATA5', rows[i].Distance);
+                response = response.replace('DATA6', rows[i].AirTime);
 
 
             } 
