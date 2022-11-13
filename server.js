@@ -28,7 +28,6 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
 // Serve static files from 'public' directory
 app.use(express.static(public_dir));
 
-
 // GET request handler for home page '/' (redirect to desired route)
 app.get('/', (req, res) => {
     let home = '/year/1998'; // <-- change this
@@ -192,8 +191,81 @@ app.get('/weekday/:selected_weekday', (req, res) => {
 });
 
 
+// Example GET request handler for data about a specific month
+    app.get('/month/:selected_month', (req, res) => {
+    let selected_month = parseInt(req.params.selected_month);
+    let previous_month = selected_month - 1;
+    let next_month = selected_month + 1;
+    fs.readFile(path.join(template_dir, 'template.html'), (err, template) => {
+    let response = template.toString();
+    console.log(selected_month);
+    if (selected_month > 1 && selected_month < 12) {
+        response = response.replace("%%DYNAMIC_LINK1%%", '/month/' + next_month);
+        response = response.replace("%%DYNAMIC_LINK2%%", '/month/' + previous_month);
+    } 
+    if (selected_month == 1) {
+        response = response.replace("%%DYNAMIC_LINK2%%", '/month/' + selected_month);
+        response = response.replace("%%DYNAMIC_LINK1%%", '/month/' + next_month);
+    } 
+    if (selected_month == 12) {
+        response = response.replace("%%DYNAMIC_LINK1%%", '/month/' + selected_month);
+        response = response.replace("%%DYNAMIC_LINK2%%", '/month/' + previous_month);
+    } 
+    if (selected_month < 1 || selected_month > 12) {
+        res.status(404).send({message: 'month ' + selected_month + ' does not exist in the database, please enter a month between 1-12'});
+    } 
+    response = response.replace("%%DYNAMIC_LINK1%%", '/month/' + next_month);
+    response = response.replace("%%DYNAMIC_LINK2%%", '/month/' + previous_month);
+    
+    // this will require a query to the SQL database
+    let query = 'SELECT Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
+    CSRArrTime, UniqueCarrier, AirTime, AirDelay, DepDelay, Origin, \
+    Dest, Distance, Cancelled FROM Year WHERE Month = ? LIMIT 50';
+    db.all(query, [selected_month], (err, rows) => {
+        console.log(err);
+        console.log(rows);
+        let img = '/images/airline.jpg';
 
+        response = response.replace("%%CURRENT_DYNAMIC_SUBJECT%%", "Month " + req.params.selected_month);
+        response = response.replace('%%IMG_SRC%%', img);
+        response = response.replace('%%IMG_ALT%%', 'photo of airline');
+        response = response.replace('%%DYNAMIC_UP%%', 'Next Month');
+        response = response.replace('%%DYNAMIC_DOWN%%', 'Previous Month');
 
+        let month_data = '';
+        
+        for (let i = 0; i < 50; i++) {
+            month_data = month_data + '<tr>';
+            month_data = month_data + '<td>' + rows[i].Month + '</td>';
+            month_data = month_data + '<td>' + rows[i].DayOfMonth + '</td>';
+            month_data = month_data + '<td>' + rows[i].CSRDepTime + '</td>';
+            month_data = month_data + '<td>' + rows[i].ArrTime + '</td>';
+            month_data = month_data + '<td>' + rows[i].CSRArrTime + '</td>';
+            month_data = month_data + '<td>' + rows[i].UniqueCarrier + '</td>';
+            month_data = month_data + '<td>' + rows[i].AirTime + '</td>';
+            month_data = month_data + '<td>' + rows[i].AirDelay + '</td>';
+            month_data = month_data + '<td>' + rows[i].DepDelay + '</td>';
+            month_data = month_data + '<td>' + rows[i].Origin + '</td>';
+            month_data = month_data + '<td>' + rows[i].Dest + '</td>';
+            month_data = month_data + '<td>' + rows[i].Distance + '</td>';
+            month_data = month_data + '<td>' + rows[i].Cancelled + '</td>';
+            month_data = month_data + '</tr>';
+            response = response.replace('%%DATA1%%', rows[i].AirDelay);
+            response = response.replace('%%DATA2%%', rows[i].DepDelay);
+            response = response.replace('%%DATA3%%', rows[i].AirDelay);
+            response = response.replace('%%DATA4%%', rows[i].Distance);
+            response = response.replace('%%DATA5%%', rows[i].ArrTime);
+            response = response.replace('%%DATA6%%', rows[i].CSRArrTime);
+        } 
+        response = response.replace('%%DYNAMIC_INFOMATION%%', month_data); 
+        response = response.replace('%%DYNAMIC_H1%%', 'Why Airline Delay is Important to Sustainability')
+        response = response.replace('%%DYNAMIC_PARAGRAPH%%', "Causes more gas emission to escape to the Earth's atmosphere \
+        meaning that there will be more environmental harm. In other words, the longer the delay, cancellation, flight diversion, and so forth there are, \
+        the more impact airline delay has on the environment. ")
+        res.status(200).type('html').send(response); 
+    })
+    });
+});
 
 app.listen(port, () => {
     console.log('Now listening on port ' + port);
