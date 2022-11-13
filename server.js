@@ -114,6 +114,83 @@ app.get('/year/:selected_year', (req, res) => {
     });
 });
 
+app.get('/weekday/:selected_weekday', (req, res) => {
+    let selected_weekday = parseInt(req.params.selected_weekday);
+    let yesterday = selected_weekday - 1;
+    let tomorrow = selected_weekday + 1;
+    fs.readFile(path.join(template_dir, 'template.html'), (err, template) => {
+    let response = template.toString();
+    console.log(selected_weekday);
+    if (selected_weekday > 1 && selected_weekday < 7) {
+        response = response.replace("%%DYNAMIC_LINK1%%", '/weekday/' + tomorrow);
+        response = response.replace("%%DYNAMIC_LINK2%%", '/weekday/' + yesterday);
+    } 
+    if (selected_weekday == 1) {
+        response = response.replace("%%DYNAMIC_LINK2%%", '/weekday/' + selected_weekday);
+        response = response.replace("%%DYNAMIC_LINK1%%", '/weekday/' + tomorrow);
+    } 
+    if (selected_weekday == 7) {
+        response = response.replace("%%DYNAMIC_LINK1%%", '/weekday/' + selected_weekday);
+        response = response.replace("%%DYNAMIC_LINK2%%", '/weekday/' + yesterday);
+    } 
+    if (selected_weekday < 1 || selected_weekday > 7) {
+        res.status(404).send({message: 'Weekday ' + selected_weekday + ' does not exist in the database, please enter a weekday between 1-7'});
+    } 
+    response = response.replace("%%DYNAMIC_LINK1%%", '/weekday/' + tomorrow);
+    response = response.replace("%%DYNAMIC_LINK2%%", '/weekday/' + yesterday);
+    // modify `template` and send response
+    // this will require a query to the SQL database
+    let query = 'SELECT Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
+    CSRArrTime, UniqueCarrier, AirTime, AirDelay, DepDelay, Origin, \
+    Dest, Distance, Cancelled FROM Year WHERE DepTime = ? LIMIT 50';
+    db.all(query, [selected_weekday], (err, rows) => {
+        console.log(err);
+        console.log(rows);
+        let img = '/images/airline.jpg';
+
+        response = response.replace("%%CURRENT_DYNAMIC_SUBJECT%%", "Weekday " + req.params.selected_weekday);
+        response = response.replace('%%IMG_SRC%%', img);
+        response = response.replace('%%IMG_ALT%%', 'photo of airline');
+        response = response.replace('%%DYNAMIC_UP%%', 'Next Weekday');
+        response = response.replace('%%DYNAMIC_DOWN%%', 'Previous Weekday');
+
+        let weekday_data = '';
+        
+        for (let i = 0; i < 50; i++) {
+            weekday_data = weekday_data + '<tr>';
+            weekday_data = weekday_data + '<td>' + rows[i].Month + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].DayOfMonth + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].CSRDepTime + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].ArrTime + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].CSRArrTime + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].UniqueCarrier + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].AirTime + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].AirDelay + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].DepDelay + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].Origin + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].Dest + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].Distance + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].Cancelled + '</td>';
+            weekday_data = weekday_data + '</tr>';
+            response = response.replace('%%DATA1%%', rows[i].AirDelay);
+            response = response.replace('%%DATA2%%', rows[i].DepDelay);
+            response = response.replace('%%DATA3%%', rows[i].AirDelay);
+            response = response.replace('%%DATA4%%', rows[i].Distance);
+            response = response.replace('%%DATA5%%', rows[i].ArrTime);
+            response = response.replace('%%DATA6%%', rows[i].CSRArrTime);
+
+
+        } 
+        response = response.replace('%%DYNAMIC_INFOMATION%%', weekday_data); 
+        response = response.replace('%%DYNAMIC_H1%%', 'Why Airline Delay is Important to Sustainability')
+        response = response.replace('%%DYNAMIC_PARAGRAPH%%', "Causes more gas emission to escape to the Earth's atmosphere \
+        meaning that there will be more environmental harm. In other words, the longer the delay, cancellation, flight diversion, and so forth there are, \
+        the more impact airline delay has on the environment. ")
+        res.status(200).type('html').send(response); // <-- you may need to change this
+    })
+});
+});
+
 
 
 
