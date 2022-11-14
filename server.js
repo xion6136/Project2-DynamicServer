@@ -63,8 +63,8 @@ app.get('/year/:selected_year', (req, res) => {
         // modify `template` and send response
         // this will require a query to the SQL database
         let query = 'SELECT Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
-        CSRArrTime, UniqueCarrier, AirTime, AirDelay, DepDelay, Origin, \
-        Dest, Distance, Cancelled FROM Year WHERE Year = ? LIMIT 50';
+        CSRArrTime, UniqueCarrier, ActualElapsedTime, AirTime, AirDelay, DepDelay, Dest, \
+        Distance FROM Year WHERE Year = ? LIMIT 50';
         db.all(query, [selected_year], (err, rows) => {
             console.log(err);
             console.log(rows);
@@ -86,13 +86,13 @@ app.get('/year/:selected_year', (req, res) => {
                 year_data = year_data + '<td>' + rows[i].ArrTime + '</td>';
                 year_data = year_data + '<td>' + rows[i].CSRArrTime + '</td>';
                 year_data = year_data + '<td>' + rows[i].UniqueCarrier + '</td>';
+                year_data = year_data + '<td>' + rows[i].ActualElapsedTime + '</td>';
+                year_data = year_data + '<td>' + rows[i].CSRElapsedTime + '</td>';
                 year_data = year_data + '<td>' + rows[i].AirTime + '</td>';
-                year_data = year_data + '<td>' + rows[i].AirDelay + '</td>';
+                year_data = year_data + '<td>' + rows[i].ArrDelay + '</td>';
                 year_data = year_data + '<td>' + rows[i].DepDelay + '</td>';
-                year_data = year_data + '<td>' + rows[i].Origin + '</td>';
                 year_data = year_data + '<td>' + rows[i].Dest + '</td>';
                 year_data = year_data + '<td>' + rows[i].Distance + '</td>';
-                year_data = year_data + '<td>' + rows[i].Cancelled + '</td>';
                 year_data = year_data + '</tr>';
                 response = response.replace('DATA1', rows[i].AirDelay);
                 response = response.replace('DATA2', rows[i].DepDelay);
@@ -140,8 +140,8 @@ app.get('/weekday/:selected_weekday', (req, res) => {
     // modify `template` and send response
     // this will require a query to the SQL database
     let query = 'SELECT Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
-    CSRArrTime, UniqueCarrier, AirTime, AirDelay, DepDelay, Origin, \
-    Dest, Distance, Cancelled FROM Year WHERE DepTime = ? LIMIT 50';
+    CSRArrTime, UniqueCarrier, ActualElapsedTime, AirTime, AirDelay, DepDelay, Dest, \
+    Distance FROM Year WHERE Year = ? LIMIT 50';
     db.all(query, [selected_weekday], (err, rows) => {
         console.log(err);
         console.log(rows);
@@ -163,13 +163,13 @@ app.get('/weekday/:selected_weekday', (req, res) => {
             weekday_data = weekday_data + '<td>' + rows[i].ArrTime + '</td>';
             weekday_data = weekday_data + '<td>' + rows[i].CSRArrTime + '</td>';
             weekday_data = weekday_data + '<td>' + rows[i].UniqueCarrier + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].ActualElapsedTime + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].CSRElapsedTime + '</td>';
             weekday_data = weekday_data + '<td>' + rows[i].AirTime + '</td>';
-            weekday_data = weekday_data + '<td>' + rows[i].AirDelay + '</td>';
+            weekday_data = weekday_data + '<td>' + rows[i].ArrDelay + '</td>';
             weekday_data = weekday_data + '<td>' + rows[i].DepDelay + '</td>';
-            weekday_data = weekday_data + '<td>' + rows[i].Origin + '</td>';
             weekday_data = weekday_data + '<td>' + rows[i].Dest + '</td>';
             weekday_data = weekday_data + '<td>' + rows[i].Distance + '</td>';
-            weekday_data = weekday_data + '<td>' + rows[i].Cancelled + '</td>';
             weekday_data = weekday_data + '</tr>';
             response = response.replace('%%DATA1%%', rows[i].AirDelay);
             response = response.replace('%%DATA2%%', rows[i].DepDelay);
@@ -219,8 +219,8 @@ app.get('/weekday/:selected_weekday', (req, res) => {
     
     // this will require a query to the SQL database
     let query = 'SELECT Month, DayOfMonth, DepTime, CSRDepTime, ArrTime, \
-    CSRArrTime, UniqueCarrier, AirTime, AirDelay, DepDelay, Origin, \
-    Dest, Distance, Cancelled FROM Year WHERE Month = ? LIMIT 50';
+    CSRArrTime, UniqueCarrier, ActualElapsedTime, AirTime, AirDelay, DepDelay, Dest, \
+    Distance FROM Year WHERE Year = ? LIMIT 50';
     db.all(query, [selected_month], (err, rows) => {
         console.log(err);
         console.log(rows);
@@ -242,13 +242,13 @@ app.get('/weekday/:selected_weekday', (req, res) => {
             month_data = month_data + '<td>' + rows[i].ArrTime + '</td>';
             month_data = month_data + '<td>' + rows[i].CSRArrTime + '</td>';
             month_data = month_data + '<td>' + rows[i].UniqueCarrier + '</td>';
+            month_data = month_data + '<td>' + rows[i].ActualElapsedTime + '</td>';
+            month_data = month_data + '<td>' + rows[i].CSRElapsedTime + '</td>';
             month_data = month_data + '<td>' + rows[i].AirTime + '</td>';
-            month_data = month_data + '<td>' + rows[i].AirDelay + '</td>';
+            month_data = month_data + '<td>' + rows[i].ArrDelay + '</td>';
             month_data = month_data + '<td>' + rows[i].DepDelay + '</td>';
-            month_data = month_data + '<td>' + rows[i].Origin + '</td>';
             month_data = month_data + '<td>' + rows[i].Dest + '</td>';
             month_data = month_data + '<td>' + rows[i].Distance + '</td>';
-            month_data = month_data + '<td>' + rows[i].Cancelled + '</td>';
             month_data = month_data + '</tr>';
             response = response.replace('%%DATA1%%', rows[i].AirDelay);
             response = response.replace('%%DATA2%%', rows[i].DepDelay);
